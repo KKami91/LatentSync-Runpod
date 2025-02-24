@@ -10,9 +10,16 @@ from io import BytesIO
 import glob
 from runpod.serverless.utils.rp_cleanup import clean
 import argparse
+import logging
 
 #로컬 전용
-import tempfile
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    filename="/workspace/latent_sync.log",  # 로그 파일 경로
+    filemode="w",  # 파일 모드 (w: 덮어쓰기, a: 이어쓰기)
+)
+logger = logging.getLogger(__name__)
 
 def get_value_at_index(obj: Union[Sequence, Mapping], index: int) -> Any:
     """Returns the value at the given index of a sequence or mapping.
@@ -337,12 +344,18 @@ if __name__ == "__main__":
         audio_data = f.read()
     video_name = os.path.vasename(args.video)
 
-    result = process_latentsync(video_data, audio_data, video_name, args.width, args.height)
 
-    output_video_data = base64.b64decode(result['output']['video_data'])
+    logger.info("LatentSync 작업 시작")
 
-    with open(args.output, 'wb') as f:
-        f.write(output_video_data)
+    try:
+        result = process_latentsync(video_data, audio_data, video_name, args.width, args.height)
 
-    print("End Process : ", args.output)
-    
+        output_video_data = base64.b64decode(result['output']['video_data'])
+
+        with open(args.output, 'wb') as f:
+            f.write(output_video_data)
+        
+        logger.info(f"LatentSync 완료. 결과 파일: {args.output}")
+
+    except Exception as e:
+        logger.exception("LatentSync 작업 중 오류")
