@@ -129,16 +129,34 @@ def import_custom_nodes() -> None:
 
 
 
+# def setup_environment():
+#     """Setup the ComfyUI environment"""
+#     add_comfyui_directory_to_sys_path()
+#     add_extra_model_paths()
+
+#     import folder_paths
+#     custom_node_paths = folder_paths.get_folder_paths("custom_nodes")
+#     logger.info("custom_node_paths : ", custom_node_paths)
+
+#     import_custom_nodes()
+
 def setup_environment():
     """Setup the ComfyUI environment"""
     add_comfyui_directory_to_sys_path()
     add_extra_model_paths()
-
-    import folder_paths
-    custom_node_paths = folder_paths.get_folder_paths("custom_nodes")
-    logger.info("custom_node_paths : ", custom_node_paths)
-
+    
+    # custom_nodes 디렉토리 확인
+    custom_nodes_path = "/workspace/ComfyUI/custom_nodes"
+    if not os.path.exists(custom_nodes_path):
+        os.makedirs(custom_nodes_path)
+        
+    # 필요한 노드들이 있는지 확인
     import_custom_nodes()
+    
+    from nodes import NODE_CLASS_MAPPINGS
+    print("Available nodes:", list(NODE_CLASS_MAPPINGS.keys()))
+    if "LoadAudio" not in NODE_CLASS_MAPPINGS:
+        print("Warning: LoadAudio node not found!")
 
 
 def process_latentsync(video_data: bytes, audio_data: bytes, video_name: str, custom_width_: int, custom_height_: int):
