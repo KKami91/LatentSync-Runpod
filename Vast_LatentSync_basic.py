@@ -332,7 +332,7 @@ if __name__ == "__main__":
     parser.add_argument("--audio", required=True, help="Input Audio")
     parser.add_argument("--output", required=True, help="Output Video")
     parser.add_argument("--width", type=int, default=0, help="Custom Width")
-    parser.add_argument("--Height", type=int, default=0, help="Custom Height")
+    parser.add_argument("--height", type=int, default=0, help="Custom Height")
 
     args = parser.parse_args()
     with open(args.video, 'rb') as f:
