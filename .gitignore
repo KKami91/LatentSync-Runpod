@@ -38,3 +38,8 @@ venv/
 # 웹 관련 사용자 정의 버전 및 시스템 파일
 web_custom_versions/
 .DS_Store
+
+*.mp4
+*.mp3
+*.wav
+*.log

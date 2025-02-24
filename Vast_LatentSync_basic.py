@@ -14,7 +14,8 @@ import logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    filename="/workspace/latent_sync.log",  # 로그 파일 경로
+    #filename="/workspace/latent_sync.log",  # 로그 파일 경로
+    filename="./latent_sync.log",  # 로그 파일 경로
     filemode="w",  # 파일 모드 (w: 덮어쓰기, a: 이어쓰기)
 )
 logger = logging.getLogger(__name__)
@@ -132,6 +133,11 @@ def setup_environment():
     """Setup the ComfyUI environment"""
     add_comfyui_directory_to_sys_path()
     add_extra_model_paths()
+
+    import folder_paths
+    custom_node_paths = folder_paths.get_folder_paths("custom_nodes")
+    logger.info("custom_node_paths : ", custom_node_paths)
+
     import_custom_nodes()
 
 
@@ -286,6 +292,7 @@ def handler(event):
         setup_environment()
         
         # 처리
+        logging.info("process_latentsync 전....!")
         result = process_latentsync(video_data, audio_data, video_name, custom_width_, custom_height_)
         
 

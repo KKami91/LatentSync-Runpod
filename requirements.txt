@@ -28,6 +28,7 @@ decord
 ffmpeg-python
 imageio-ffmpeg
 runpod
+torchsde
 
 #non essential dependencies:
 kornia>=0.7.1
