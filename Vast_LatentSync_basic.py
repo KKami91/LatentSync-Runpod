@@ -165,7 +165,11 @@ def process_latentsync(video_data: bytes, audio_data: bytes, video_name: str, cu
     import os
     import tempfile
 
+    logger.info("innnnn pppppppprocess_latentsynccccccccccccccccc")
+
     setup_environment()
+
+    logger.info("setup environment 진행 후................")
 
     video_name_without_ext = os.path.splitext(video_name)[0]
     
