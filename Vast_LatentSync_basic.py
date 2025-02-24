@@ -98,24 +98,52 @@ def add_extra_model_paths() -> None:
     """
     Parse the optional extra_model_paths.yaml file and add the parsed paths to the sys.path.
     """
-    try:
-        from main import load_extra_path_config
-    except ImportError:
-        print(
-            "Could not import load_extra_path_config from main.py. Looking in utils.extra_config instead."
-        )
-        from utils.extra_config import load_extra_path_config
-
+    logger.info("Adding extra model paths...")
+    # utils.extra_config import 부분 제거하고 단순화
     extra_model_paths = find_path("extra_model_paths.yaml")
-
     if extra_model_paths is not None:
-        load_extra_path_config(extra_model_paths)
+        logger.info(f"Found extra_model_paths at: {extra_model_paths}")
     else:
-        print("Could not find the extra_model_paths config file.")
+        logger.info("No extra_model_paths.yaml found, skipping...")
 
 
 # add_comfyui_directory_to_sys_path()
 # add_extra_model_paths()
+
+def setup_utils_package():
+    """Setup utils directory as a Python package"""
+    logger.info("Setting up utils package...")
+    utils_dir = "/workspace/ComfyUI/utils"
+    
+    # utils 디렉토리가 없으면 생성
+    if not os.path.exists(utils_dir):
+        os.makedirs(utils_dir)
+        logger.info(f"Created utils directory at {utils_dir}")
+    
+    # __init__.py 파일 생성
+    init_file = os.path.join(utils_dir, "__init__.py")
+    if not os.path.exists(init_file):
+        with open(init_file, 'w') as f:
+            pass
+        logger.info("Created __init__.py in utils directory")
+
+    # json_util.py가 없으면 생성
+    json_util_file = os.path.join(utils_dir, "json_util.py")
+    if not os.path.exists(json_util_file):
+        with open(json_util_file, 'w') as f:
+            f.write("""
+def merge_json_recursive(dict1, dict2):
+    for key in dict2:
+        if key in dict1:
+            if isinstance(dict1[key], dict) and isinstance(dict2[key], dict):
+                merge_json_recursive(dict1[key], dict2[key])
+            else:
+                dict1[key] = dict2[key]
+        else:
+            dict1[key] = dict2[key]
+    return dict1
+""")
+        logger.info("Created json_util.py in utils directory")
 
 
 def import_custom_nodes() -> None:
@@ -156,23 +184,42 @@ def import_custom_nodes() -> None:
 
 def setup_environment():
     """Setup the ComfyUI environment"""
-    logger.info("innnnnnnnnnnnnnn setup_environment().................................")
-    add_comfyui_directory_to_sys_path()
-    check_utils_package()
-    add_extra_model_paths()
+    logger.info("Setting up environment...")
     
-    # custom_nodes 디렉토리 확인
-    custom_nodes_path = "/workspace/ComfyUI/custom_nodes"
-    if not os.path.exists(custom_nodes_path):
-        os.makedirs(custom_nodes_path)
+    # ComfyUI 디렉토리를 Python 경로에 추가
+    comfyui_path = "/workspace/ComfyUI"
+    if comfyui_path not in sys.path:
+        sys.path.insert(0, comfyui_path)
+        logger.info(f"Added {comfyui_path} to sys.path")
+
+    # utils 디렉토리가 패키지로 인식되도록 __init__.py 확인
+    utils_init = os.path.join(comfyui_path, "utils", "__init__.py")
+    if not os.path.exists(utils_init):
+        with open(utils_init, 'w') as f:
+            pass
+        logger.info("Created __init__.py in utils directory")
+
+    # Python path 로깅
+    logger.info("Python path:")
+    for path in sys.path:
+        logger.info(f"  - {path}")
+    
+    try:
+        # 모듈 import 테스트
+        logger.info("Testing imports...")
+        import utils.json_util as json_util
+        logger.info("Successfully imported json_util")
         
-    # 필요한 노드들이 있는지 확인
-    import_custom_nodes()
-    
-    from nodes import NODE_CLASS_MAPPINGS
-    logger.info("Available nodes:", list(NODE_CLASS_MAPPINGS.keys()))
-    if "LoadAudio" not in NODE_CLASS_MAPPINGS:
-        print("Warning: LoadAudio node not found!")
+        # Custom nodes 초기화
+        import_custom_nodes()
+        logger.info("Custom nodes initialized successfully")
+    except Exception as e:
+        logger.error(f"Error during environment setup: {str(e)}")
+        logger.error(f"Current working directory: {os.getcwd()}")
+        logger.error(f"Directory contents: {os.listdir('.')}")
+        if os.path.exists("/workspace/ComfyUI/utils"):
+            logger.error(f"Utils directory contents: {os.listdir('/workspace/ComfyUI/utils')}")
+        raise
 
 
 def process_latentsync(video_data: bytes, audio_data: bytes, video_name: str, custom_width_: int, custom_height_: int):
