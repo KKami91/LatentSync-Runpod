@@ -339,7 +339,7 @@ if __name__ == "__main__":
         video_data = f.read()
     with open(args.audio, 'rb') as f:
         audio_data = f.read()
-    video_name = os.path.vasename(args.video)
+    video_name = os.path.basename(args.video)
 
 
     logger.info("LatentSync 작업 시작")
