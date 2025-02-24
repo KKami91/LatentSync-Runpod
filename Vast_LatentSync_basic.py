@@ -154,7 +154,7 @@ def setup_environment():
     import_custom_nodes()
     
     from nodes import NODE_CLASS_MAPPINGS
-    print("Available nodes:", list(NODE_CLASS_MAPPINGS.keys()))
+    logger.info("Available nodes:", list(NODE_CLASS_MAPPINGS.keys()))
     if "LoadAudio" not in NODE_CLASS_MAPPINGS:
         print("Warning: LoadAudio node not found!")
 
