@@ -142,6 +142,7 @@ def import_custom_nodes() -> None:
 
 def setup_environment():
     """Setup the ComfyUI environment"""
+    logger.info("innnnnnnnnnnnnnn setup_environment().................................")
     add_comfyui_directory_to_sys_path()
     add_extra_model_paths()
     
@@ -163,10 +164,8 @@ def process_latentsync(video_data: bytes, audio_data: bytes, video_name: str, cu
     from nodes import NODE_CLASS_MAPPINGS
     import os
     import tempfile
-    import logging
 
-    logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger(__name__)
+    setup_environment()
 
     video_name_without_ext = os.path.splitext(video_name)[0]
     
