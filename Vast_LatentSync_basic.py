@@ -3,12 +3,10 @@ import random
 import sys
 from typing import Sequence, Mapping, Any, Union
 import torch
-import runpod
 import base64
 from typing import Sequence, Mapping, Any, Union
 from io import BytesIO
 import glob
-from runpod.serverless.utils.rp_cleanup import clean
 import argparse
 import logging
 
@@ -269,7 +267,6 @@ def process_latentsync(video_data: bytes, audio_data: bytes, video_name: str, cu
             
 
 def handler(event):
-    """Runpod serverless handler"""
     import os
     import glob
 
