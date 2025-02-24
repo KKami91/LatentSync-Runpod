@@ -22,18 +22,41 @@ import aiohttp
 from aiohttp import web
 import logging
 
+"""
+로그
+"""
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    filename="./latent_sync.log",
+    filemode="w",
+)
+logger = logging.getLogger(__name__)
+
+
 import mimetypes
 from comfy.cli_args import args
+logger.info("-----------comfy/utils 전------------")
 import comfy.utils
+logger.info("-----------comfy/utils 후------------")
 import comfy.model_management
+logger.info("-----------comfy/model_management 후------------")
 import node_helpers
+logger.info("-----------node_helpers 후------------")
 from comfyui_version import __version__
+logger.info("-----------__version__ 후------------")
 from app.frontend_management import FrontendManager
+logger.info("-----------FrontendManager 후------------")
 from app.user_manager import UserManager
+logger.info("-----------UserManager 후------------")
 from app.model_manager import ModelFileManager
+logger.info("-----------__verModelFileManagersion__ 후------------")
 from app.custom_node_manager import CustomNodeManager
+logger.info("-----------__verCustomNodeManagersion__ 후------------")
 from typing import Optional
+logger.info("-----------Optional 후------------")
 from api_server.routes.internal.internal_routes import InternalRoutes
+logger.info("라이브러리 다 import....!")
 
 class BinaryEventTypes:
     PREVIEW_IMAGE = 1

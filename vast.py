@@ -23,19 +23,21 @@ def get_value_at_index(obj: Union[Sequence, Mapping], index: int) -> Any:
 def setup_environment():
     """ComfyUI 환경 설정"""
     logger.info(".....setup environment 내부.....")
-    logger.ifno("sys.path???? ", sys.path)
-    # ComfyUI 경로를 Python path에 추가
-    comfyui_path = "/workspace/ComfyUI"
-    if comfyui_path not in sys.path:
-        sys.path.insert(0, comfyui_path)
-        logger.info(f"Added {comfyui_path} to Python path")
+    logger.info("--------> ComfyUI/app/custom_node_manager.py ----> sys.path : ", sys.path)
+    logger.info("sys.path???? ", sys.path)
 
     # Custom nodes 초기화
     try:
+        logger.info('execution 전.......')
         import execution
+        logger.info('server 전.......')
         import server
+        logger.info('nodes 전.......')
         from nodes import NODE_CLASS_MAPPINGS, init_extra_nodes
+        logger.info('asycio 전.......')
         import asyncio
+
+        logger.info('loop 전.......')
 
         # 이벤트 루프 설정
         loop = asyncio.new_event_loop()
@@ -147,6 +149,23 @@ def main():
     logger.info(f"Input video: {args.video}")
     logger.info(f"Input audio: {args.audio}")
     logger.info(f"Output path: {args.output}")
+
+    logger.info("comfyui_path 설정 전.........")
+    comfyui_path = "/workspace/ComfyUI"  # ComfyUI의 실제 경로 (Vast.ai 환경)
+    if 'PYTHONPATH' in os.environ:
+        logger.info(f"PYTHONPATH in os.environ.......................{os.environ}")
+        os.environ['PYTHONPATH'] += os.pathsep + comfyui_path
+    else:
+        logger.info(f"PYTHONPATH notttttt in os.environ.......................{os.environ}")
+        os.environ['PYTHONPATH'] = comfyui_path
+
+    if comfyui_path not in sys.path:
+        sys.path.insert(0, comfyui_path)
+
+    logger.info("comfyui_path 설정 후.........")
+
+    logger.info(f"PYTHONPATH : {os.environ.get('PYTHONPATH')}")
+    logger.info(f"sys.path: {sys.path}")
     
     try:
         logger.info("setup_environment 전")
