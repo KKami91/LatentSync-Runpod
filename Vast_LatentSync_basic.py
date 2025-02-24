@@ -80,6 +80,20 @@ def add_comfyui_directory_to_sys_path() -> None:
         print(f"'{comfyui_path}' added to sys.path")
 
 
+# utils 디렉토리가 있는지 확인하고 __init__.py 생성
+def check_utils_package():
+    utils_dir = os.path.join("/workspace/ComfyUI", "utils")
+    init_file = os.path.join(utils_dir, "__init__.py")
+    
+    if not os.path.exists(utils_dir):
+        os.makedirs(utils_dir)
+        logger.info(f"Created utils directory at {utils_dir}")
+    
+    if not os.path.exists(init_file):
+        with open(init_file, 'w') as f:
+            pass  # 빈 __init__.py 파일 생성
+        logger.info(f"Created __init__.py at {init_file}")
+
 def add_extra_model_paths() -> None:
     """
     Parse the optional extra_model_paths.yaml file and add the parsed paths to the sys.path.
@@ -144,6 +158,7 @@ def setup_environment():
     """Setup the ComfyUI environment"""
     logger.info("innnnnnnnnnnnnnn setup_environment().................................")
     add_comfyui_directory_to_sys_path()
+    check_utils_package()
     add_extra_model_paths()
     
     # custom_nodes 디렉토리 확인
